@@ -1,0 +1,302 @@
+diff --git a/.ai/ui-plan.md b/.ai/ui-plan.md
+index 1f666fd..8c69cc1 100644
+--- a/.ai/ui-plan.md
++++ b/.ai/ui-plan.md
+@@ -34,6 +34,23 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React
+   - Kluczowe komponenty: Formularz edycji profilu, przyciski akcji.
+   - UX, dostępność i bezpieczeństwo: Prosty, przejrzysty design, minimalna liczba interakcji.
+ 
++- **Dashboard**
++  - **Ścieżka**: `/dashboard`
++  - **Główny cel**: Zapewnienie użytkownikowi przeglądu najważniejszych informacji i statystyk dotyczących jego aktywności w aplikacji.
++  - **Kluczowe informacje**:
++    - Statystyki dotyczące fiszek (np. liczba stworzonych fiszek, liczba zaakceptowanych, liczba odrzuconych).
++    - Ostatnie aktywności użytkownika (np. ostatnio edytowane fiszki, ostatnie generacje).
++    - Szybki dostęp do najczęściej używanych funkcji (np. przycisk do generowania nowych fiszek, link do listy fiszek).
++  - **Kluczowe komponenty**:
++    - **Statystyki**: Komponent wyświetlający wykresy lub liczby dotyczące aktywności użytkownika.
++    - **Lista ostatnich aktywności**: Komponent pokazujący ostatnie działania użytkownika w aplikacji.
++    - **Skróty**: Przyciski lub linki do najczęściej używanych funkcji, takich jak generowanie fiszek czy przeglądanie listy fiszek.
++    - **Powiadomienia**: Komponent do wyświetlania powiadomień o nowych funkcjach lub aktualizacjach.
++  - **UX, dostępność i bezpieczeństwo**:
++    - Responsywny design, aby dashboard był dostępny na różnych urządzeniach.
++    - Czytelne komunikaty i wizualizacje, aby użytkownik mógł szybko zrozumieć swoje dane.
++    - Zabezpieczenia dotyczące danych użytkownika, aby zapewnić prywatność i bezpieczeństwo.
++
+ ## 3. Mapa podróży użytkownika
+ 
+ 1. Użytkownik uzyskuje dostęp do aplikacji i trafia do ekranu logowania/rejestracji.
+@@ -48,15 +65,16 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React
+ 
+ ## 4. Układ i struktura nawigacji
+ 
+-— **Gtowna nawigacja:** Dostępna jako górne menu w layoucie strony po zalogowaniu. 
++— **Gotowa nawigacja:** Dostępna jako górne menu w layoucie strony po zalogowaniu. 
+ — **Elementy nawigacyjne:** Linki do widokow: "Generowanie fiszek", "Moje fiszki", "Profil" oraz przycisk wylogowania. 
+-— **Responsywnotd:** W widoku mobilnym nawigacja przeksztatca sae w menu hamburger, umoiliwiajac katwy dostep do pozostalych widok6w. 
+-— **Przeptyw:** Nawigacja umoiliwia bezproblemowe przechodzenle miedzy widokami, zachowujac kontekst ukytkownika i jego dane sesyjne. 
+-## 5. Ktuczowe komponenty 
+-— **Formularze uwierzytelnienia:** Komponenty logowania i rejestracji z obstuga walidacji. 
+-— **Komponent generowania fiszek:** Z polem tekstowym i przyciskiem uruchamiajacym proces generacji, z wskainikiem tadowania. 
+-— **Lista fiszek:** Interaktywny komponent wytwietlajacy liste fiszek z opcjami edycji i usuwania.
+-— **Modal edycji:** Komponent umozliwiajacy edycje fiszek z walidacja danych przed zatwierdzeniem.
+-— **Toast notifications:** Komponent do wytwietlania komunikatow o sukcesach oraz bledach.
+-— **Menu Nawigacji:** Elementy nawigacyjne ulatwiajace przemieszczanie sie miedzy widokami. 
++— **Responsywność:** W widoku mobilnym nawigacja przekształca się w menu hamburger, umożliwiając łatwy dostep do pozostalych widoków. 
++— **Przepływ:** Nawigacja umożliwia bezproblemowe przechodzenie między widokami, zachowując kontekst użytkownika i jego dane sesyjne. 
++
++## 5. Kluczowe komponenty 
++— **Formularze uwierzytelnienia:** Komponenty logowania i rejestracji z obsługą walidacji. 
++— **Komponent generowania fiszek:** Z polem tekstowym i przyciskiem uruchamiającym proces generacji, z wskaźnikiem ładowania. 
++— **Lista fiszek:** Interaktywny komponent wyświetlający listę fiszek z opcjami edycji i usuwania.
++— **Modal edycji:** Komponent umożliwiający edycję fiszek z walidacją danych przed zatwierdzeniem.
++— **Toast notifications:** Komponent do wyświetlania komunikatów o sukcesach oraz błędach.
++— **Menu nawigacji:** Elementy nawigacyjne ułatwiające przemieszczanie się między widokami. 
+ 
+diff --git a/src/lib/services/ai-generation.service.ts b/src/lib/services/ai-generation.service.ts
+index eef77b4..c7a9139 100644
+--- a/src/lib/services/ai-generation.service.ts
++++ b/src/lib/services/ai-generation.service.ts
+@@ -3,11 +3,52 @@ import type { Database } from "../../db/database.types";
+ import type { FlashcardProposalDto, GenerationResponseDto } from "../../types";
+ import { createHash } from "crypto";
+ import { DEFAULT_USER_ID } from "../../db/supabase.client";
++import { OpenRouterService } from "./openrouter.service";
+ 
+ export class AIGenerationService {
++  private readonly openRouter: OpenRouterService;
++
+   constructor(
+-    private readonly supabase: SupabaseClient<Database>
+-  ) {}
++    private readonly supabase: SupabaseClient<Database>,
++    openRouterConfig: {
++      apiKey?: string;
++      apiEndpoint?: string;
++      defaultModel?: string;
++    }
++  ) {
++    const openrouterApiKey = import.meta.env.OPENROUTER_API_KEY;
++    this.openRouter = new OpenRouterService();
++    this.openRouter.initialize({
++      apiKey: openRouterConfig.apiKey || openrouterApiKey || "",
++      apiEndpoint: openRouterConfig.apiEndpoint || "https://openrouter.ai/api/v1/chat/completions",
++      defaultModel: openRouterConfig.defaultModel || "meta-llama/llama-3.3-70b-instruct:free",
++      defaultSystemMessage: this.getSystemPrompt(),
++      maxRetries: 3,
++    });
++  }
++
++  private getSystemPrompt(): string {
++    return `You are an expert in creating educational flashcards. Your task is to analyze the provided text and create effective flashcards that help users learn and retain the key information.
++
++Rules for flashcard creation:
++1. Each flashcard should focus on a single concept or piece of information
++2. Front of the card should be a clear, specific question
++3. Back of the card should contain a concise, accurate answer
++4. Avoid creating cards that are too complex or contain multiple concepts
++5. Ensure the information is accurate and directly derived from the source text
++
++Your response must be valid JSON in the following format:
++{
++  "flashcards": [
++    {
++      "front": "question text",
++      "back": "answer text"
++    }
++  ]
++}
++Your response should only contain the json and nothing else  
++`;
++  }
+ 
+   async generateFlashcards(sourceText: string, userId: string): Promise<GenerationResponseDto> {
+     const startTime = Date.now();
+@@ -21,9 +62,9 @@ export class AIGenerationService {
+           user_id: userId,
+           generated_count: 0,
+           generation_duration: 0,
+-          model: "gpt-4",
++          model: this.openRouter.modelName,
+           source_text_hash: textHash,
+-          source_text_length: sourceText.length
++          source_text_length: sourceText.length,
+         })
+         .select()
+         .single();
+@@ -32,17 +73,17 @@ export class AIGenerationService {
+         throw new Error("Failed to create generation record");
+       }
+ 
+-      // 2. Call mock AI service to generate flashcards
++      // 2. Generate flashcards using OpenRouter
+       const flashcards = await this.callAIService(sourceText);
+       const generationDuration = Date.now() - startTime;
+ 
+-      /* // 3. Update generation record with results
++      // 3. Update generation record with results
+       const { error: updateError } = await this.supabase
+         .from("generations")
+         .update({
+           generated_count: flashcards.length,
+           generation_duration: generationDuration,
+-          model: "gpt-4-mock"
++          model: this.openRouter.modelName,
+         })
+         .eq("id", generation.id);
+ 
+@@ -52,27 +93,25 @@ export class AIGenerationService {
+ 
+       // 4. Create flashcard proposals
+       if (flashcards.length > 0) {
+-        const { error: flashcardsError } = await this.supabase
+-          .from("flashcards")
+-          .insert(
+-            flashcards.map(card => ({
+-              ...card,
+-              generation_id: generation.id,
+-              user_id: userId
+-            }))
+-          );
++        const { error: flashcardsError } = await this.supabase.from("flashcards").insert(
++          flashcards.map((card) => ({
++            ...card,
++            generation_id: generation.id,
++            user_id: userId,
++          }))
++        );
+ 
+         if (flashcardsError) {
+           console.error("Flashcard insert error:", flashcardsError);
+           throw new Error(`Failed to create flashcard proposals: ${flashcardsError.message}`);
+         }
+-      } */
++      }
+ 
+       return {
+         id: generation.id,
+         generated_count: flashcards.length,
+         created_at: generation.created_at,
+-        flashcards_proposals: flashcards
++        flashcards_proposals: flashcards,
+       };
+     } catch (error) {
+       // Log error and rethrow
+@@ -82,51 +121,67 @@ export class AIGenerationService {
+   }
+ 
+   private async callAIService(sourceText: string): Promise<FlashcardProposalDto[]> {
+-    // Mock implementation that creates 3 flashcards based on text length
+-    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API delay
+-
+-    return [
+-      {
+-        id: 1,
+-        front: "What is the length of the source text?",
+-        back: `The text is ${sourceText.length} characters long`,
+-        source: "ai-full"
+-      },
+-      {
+-        id: 2,
+-        front: "What is the first word of the text?",
+-        back: sourceText.split(" ")[0] || "Empty text",
+-        source: "ai-full"
+-      },
+-      {
+-        id: 3,
+-        front: "How many words are in the text?",
+-        back: `${sourceText.split(" ").length} words`,
+-        source: "ai-full"
++    try {
++      const response = await this.openRouter.sendChatPrompt(this.getSystemPrompt(), sourceText, {
++        temperature: 0.7,
++        max_tokens: 2000,
++        top_p: 0.9,
++      });
++
++      console.log("response:", response);
++      const parsedResponse = this.extractAndParseJson(response.message);
++      console.log("Parsed response:", parsedResponse);
++
++      if (!parsedResponse.flashcards || !Array.isArray(parsedResponse.flashcards)) {
++        throw new Error("Invalid response format from AI service");
+       }
+-    ];
++
++      return parsedResponse.flashcards.map((card: { front: string; back: string }, index: number) => ({
++        front: card.front,
++        back: card.back,
++        source: "ai-full",
++      }));
++    } catch (error) {
++      console.error("Error calling AI service:", error);
++      throw error;
++    }
+   }
+ 
+   private calculateHash(text: string): string {
+-    return createHash("md5")
+-      .update(text)
+-      .digest("hex");
++    return createHash("md5").update(text).digest("hex");
+   }
+ 
+   private async logError(error: unknown): Promise<void> {
+     try {
+-      await this.supabase
+-        .from("generation_error_logs")
+-        .insert({
+-          error_code: "GENERATION_ERROR",
+-          error_message: error instanceof Error ? error.message : "Unknown error",
+-          model: "gpt-4",
+-          source_text_hash: "",
+-          source_text_length: 0,
+-          user_id: DEFAULT_USER_ID
+-        });
++      await this.supabase.from("generation_error_logs").insert({
++        error_code: "GENERATION_ERROR",
++        error_message: error instanceof Error ? error.message : "Unknown error",
++        model: this.openRouter.modelName,
++        source_text_hash: "",
++        source_text_length: 0,
++        user_id: DEFAULT_USER_ID,
++      });
+     } catch (logError) {
+       console.error("Failed to log error:", logError);
+     }
+   }
+-} 
+\ No newline at end of file
++
++  private extractAndParseJson(text: any) {
++    const match = text.match(/```json\s*([\s\S]*?)\s*```/);
++  
++    let jsonText = "";
++  
++    if (match && match[1]) {
++      jsonText = match[1];
++    } else {
++      jsonText = text.trim();
++    }
++  
++    try {
++      return JSON.parse(jsonText);
++    } catch (error) {
++      console.error("Failed to parse JSON:", error);
++      return null;
++    }
++  }
++}
+diff --git a/src/pages/api/generations.ts b/src/pages/api/generations.ts
+index d4c931c..79297c2 100644
+--- a/src/pages/api/generations.ts
++++ b/src/pages/api/generations.ts
+@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
+     }
+ 
+     // Initialize AI service and generate flashcards
+-    const aiService = new AIGenerationService(supabase);
++    const aiService = new AIGenerationService(supabase,{});
+ 
+     try {
+       const generationResult = await aiService.generateFlashcards(

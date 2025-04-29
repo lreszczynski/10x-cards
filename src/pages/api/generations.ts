@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Initialize AI service and generate flashcards
-    const aiService = new AIGenerationService(supabase);
+    const aiService = new AIGenerationService(supabase,{});
 
     try {
       const generationResult = await aiService.generateFlashcards(

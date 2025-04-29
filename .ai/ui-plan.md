@@ -34,6 +34,23 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React 
   - Kluczowe komponenty: Formularz edycji profilu, przyciski akcji.
   - UX, dostępność i bezpieczeństwo: Prosty, przejrzysty design, minimalna liczba interakcji.
 
+- **Dashboard**
+  - **Ścieżka**: `/dashboard`
+  - **Główny cel**: Zapewnienie użytkownikowi przeglądu najważniejszych informacji i statystyk dotyczących jego aktywności w aplikacji.
+  - **Kluczowe informacje**:
+    - Statystyki dotyczące fiszek (np. liczba stworzonych fiszek, liczba zaakceptowanych, liczba odrzuconych).
+    - Ostatnie aktywności użytkownika (np. ostatnio edytowane fiszki, ostatnie generacje).
+    - Szybki dostęp do najczęściej używanych funkcji (np. przycisk do generowania nowych fiszek, link do listy fiszek).
+  - **Kluczowe komponenty**:
+    - **Statystyki**: Komponent wyświetlający wykresy lub liczby dotyczące aktywności użytkownika.
+    - **Lista ostatnich aktywności**: Komponent pokazujący ostatnie działania użytkownika w aplikacji.
+    - **Skróty**: Przyciski lub linki do najczęściej używanych funkcji, takich jak generowanie fiszek czy przeglądanie listy fiszek.
+    - **Powiadomienia**: Komponent do wyświetlania powiadomień o nowych funkcjach lub aktualizacjach.
+  - **UX, dostępność i bezpieczeństwo**:
+    - Responsywny design, aby dashboard był dostępny na różnych urządzeniach.
+    - Czytelne komunikaty i wizualizacje, aby użytkownik mógł szybko zrozumieć swoje dane.
+    - Zabezpieczenia dotyczące danych użytkownika, aby zapewnić prywatność i bezpieczeństwo.
+
 ## 3. Mapa podróży użytkownika
 
 1. Użytkownik uzyskuje dostęp do aplikacji i trafia do ekranu logowania/rejestracji.
@@ -48,15 +65,16 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React 
 
 ## 4. Układ i struktura nawigacji
 
-— **Gtowna nawigacja:** Dostępna jako górne menu w layoucie strony po zalogowaniu. 
+— **Gotowa nawigacja:** Dostępna jako górne menu w layoucie strony po zalogowaniu. 
 — **Elementy nawigacyjne:** Linki do widokow: "Generowanie fiszek", "Moje fiszki", "Profil" oraz przycisk wylogowania. 
-— **Responsywnotd:** W widoku mobilnym nawigacja przeksztatca sae w menu hamburger, umoiliwiajac katwy dostep do pozostalych widok6w. 
-— **Przeptyw:** Nawigacja umoiliwia bezproblemowe przechodzenle miedzy widokami, zachowujac kontekst ukytkownika i jego dane sesyjne. 
-## 5. Ktuczowe komponenty 
-— **Formularze uwierzytelnienia:** Komponenty logowania i rejestracji z obstuga walidacji. 
-— **Komponent generowania fiszek:** Z polem tekstowym i przyciskiem uruchamiajacym proces generacji, z wskainikiem tadowania. 
-— **Lista fiszek:** Interaktywny komponent wytwietlajacy liste fiszek z opcjami edycji i usuwania.
-— **Modal edycji:** Komponent umozliwiajacy edycje fiszek z walidacja danych przed zatwierdzeniem.
-— **Toast notifications:** Komponent do wytwietlania komunikatow o sukcesach oraz bledach.
-— **Menu Nawigacji:** Elementy nawigacyjne ulatwiajace przemieszczanie sie miedzy widokami. 
+— **Responsywność:** W widoku mobilnym nawigacja przekształca się w menu hamburger, umożliwiając łatwy dostep do pozostalych widoków. 
+— **Przepływ:** Nawigacja umożliwia bezproblemowe przechodzenie między widokami, zachowując kontekst użytkownika i jego dane sesyjne. 
+
+## 5. Kluczowe komponenty 
+— **Formularze uwierzytelnienia:** Komponenty logowania i rejestracji z obsługą walidacji. 
+— **Komponent generowania fiszek:** Z polem tekstowym i przyciskiem uruchamiającym proces generacji, z wskaźnikiem ładowania. 
+— **Lista fiszek:** Interaktywny komponent wyświetlający listę fiszek z opcjami edycji i usuwania.
+— **Modal edycji:** Komponent umożliwiający edycję fiszek z walidacją danych przed zatwierdzeniem.
+— **Toast notifications:** Komponent do wyświetlania komunikatów o sukcesach oraz błędach.
+— **Menu nawigacji:** Elementy nawigacyjne ułatwiające przemieszczanie się między widokami. 
 
