@@ -1,0 +1,37 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { AuthForm } from '@/components/auth/AuthForm'
+---
+
+<Layout title="Sign In - 10x Cards">
+  <div class="container mx-auto min-h-[calc(100vh-4rem)] flex items-center">
+    <div class="max-w-md mx-auto w-full py-8">
+      <div class="flex flex-col space-y-2 text-center mb-8">
+        <h1 class="text-4xl font-bold tracking-tight">Welcome back</h1>
+        <p class="text-lg text-muted-foreground">
+          Enter your email to sign in to your account
+        </p>
+      </div>
+
+      <AuthForm client:load type="login" onSubmit={() => {}} />
+
+      <div class="relative my-8">
+        <div class="absolute inset-0 flex items-center">
+          <span class="w-full border-t" />
+        </div>
+        <div class="relative flex justify-center text-xs uppercase">
+          <span class="bg-background px-2 text-muted-foreground">Or continue with</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col space-y-4">
+        <a href="/auth/register" class="text-sm text-center">
+          Don't have an account? <span class="underline">Sign up</span>
+        </a>
+        <a href="/auth/reset-password" class="text-sm text-center text-muted-foreground hover:underline">
+          Forgot your password?
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout> 

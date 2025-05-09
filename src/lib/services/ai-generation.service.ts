@@ -91,10 +91,10 @@ Your response should only contain the json and nothing else
         throw new Error("Failed to update generation record");
       }
 
-      // 4. Create flashcard proposals
+      /* // 4. Create flashcard proposals
       if (flashcards.length > 0) {
         const { error: flashcardsError } = await this.supabase.from("flashcards").insert(
-          flashcards.map((card) => ({
+          flashcards.map(({id, ...card}) => ({
             ...card,
             generation_id: generation.id,
             user_id: userId,
@@ -105,7 +105,7 @@ Your response should only contain the json and nothing else
           console.error("Flashcard insert error:", flashcardsError);
           throw new Error(`Failed to create flashcard proposals: ${flashcardsError.message}`);
         }
-      }
+      } */
 
       return {
         id: generation.id,
@@ -137,6 +137,7 @@ Your response should only contain the json and nothing else
       }
 
       return parsedResponse.flashcards.map((card: { front: string; back: string }, index: number) => ({
+        id: index,
         front: card.front,
         back: card.back,
         source: "ai-full",
