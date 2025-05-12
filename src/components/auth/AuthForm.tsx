@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator'
@@ -16,9 +15,6 @@ export interface AuthFormData {
 
 interface AuthFormProps {
   type: 'login' | 'register' | 'reset'
-  onSubmit: (data: AuthFormData) => Promise<void>
-  isLoading?: boolean
-  error?: string
 }
 
 interface ValidationErrors {
@@ -28,13 +24,16 @@ interface ValidationErrors {
   acceptTerms?: string
 }
 
-export function AuthForm({ type, onSubmit, isLoading = false, error }: AuthFormProps) {
+export function AuthForm({ type }: AuthFormProps) {
   const [formData, setFormData] = useState<AuthFormData>({
     email: '',
     password: '',
     confirmPassword: '',
     acceptTerms: false,
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string>()
+  const [success, setSuccess] = useState<string>()
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
 
@@ -77,13 +76,16 @@ export function AuthForm({ type, onSubmit, isLoading = false, error }: AuthFormP
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(undefined)
+    setSuccess(undefined)
     
     // Validate all fields
     const errors: ValidationErrors = {}
     Object.keys(formData).forEach((field) => {
-      const error = validateField(field as keyof AuthFormData, formData[field as keyof AuthFormData])
+      const fieldName = field as keyof AuthFormData
+      const error = validateField(fieldName, formData[fieldName] || '')
       if (error) {
-        errors[field as keyof ValidationErrors] = error
+        errors[fieldName] = error
       }
     })
 
@@ -92,7 +94,91 @@ export function AuthForm({ type, onSubmit, isLoading = false, error }: AuthFormP
       return
     }
 
-    await onSubmit(formData)
+    setIsLoading(true)
+
+    try {
+      if (type === 'login') {
+        console.log('Sending login request...');
+        
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          console.error('Unexpected response type:', contentType);
+          const text = await response.text();
+          console.error('Response body:', text);
+          throw new Error('Server returned an invalid response');
+        }
+
+        const text = await response.text();
+        console.log('Response text:', text);
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.error('Failed to parse JSON:', e);
+          throw new Error('Invalid response format from server');
+        }
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to sign in');
+        }
+
+        if (!data.user) {
+          throw new Error('No user data received');
+        }
+
+        console.log('Login successful, redirecting...');
+        window.location.href = '/generate';
+      } else if (type === 'register') {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server returned an invalid response');
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to create account');
+        }
+
+        if (data.user && !data.user.confirmed_at) {
+          setSuccess('Please check your email for a confirmation link to complete your registration.');
+        } else {
+          window.location.href = '/generate';
+        }
+      }
+    } catch (err: any) {
+      console.error('Auth error:', err);
+      setError(err?.message || 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const updateField = (field: keyof AuthFormData, value: string | boolean) => {
@@ -110,6 +196,12 @@ export function AuthForm({ type, onSubmit, isLoading = false, error }: AuthFormP
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {success && (
+        <Alert>
+          <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
 
@@ -172,14 +264,17 @@ export function AuthForm({ type, onSubmit, isLoading = false, error }: AuthFormP
 
           <div className="flex flex-col space-y-2">
             <div className="flex items-center space-x-2">
-              <Checkbox
+              <input
+                type="checkbox"
                 id="terms"
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                 checked={formData.acceptTerms}
-                onCheckedChange={checked => updateField('acceptTerms', !!checked)}
-                required
-                aria-describedby={validationErrors.acceptTerms ? 'terms-error' : undefined}
+                onChange={(e) => updateField('acceptTerms', e.target.checked)}
               />
-              <Label htmlFor="terms" className="text-sm">
+              <Label 
+                htmlFor="terms" 
+                className="text-sm cursor-pointer select-none"
+              >
                 I accept the terms and conditions
               </Label>
             </div>

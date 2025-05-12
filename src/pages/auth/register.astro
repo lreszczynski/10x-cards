@@ -1,6 +1,22 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { AuthForm } from '@/components/auth/AuthForm'
+import { createSupabaseServerInstance } from '@/db/supabase.server'
+
+export const prerender = false;
+
+// Get supabase instance
+const supabase = createSupabaseServerInstance({
+  cookies: Astro.cookies,
+  headers: Astro.request.headers,
+});
+
+// If user is already logged in, redirect to generate page
+const { data: { user } } = await supabase.auth.getUser();
+
+if (user) {
+  return Astro.redirect('/generate');
+}
 ---
 
 <Layout title="Create Account - 10x Cards">
@@ -13,7 +29,7 @@ import { AuthForm } from '@/components/auth/AuthForm'
         </p>
       </div>
 
-      <AuthForm client:load type="register" onSubmit={() => {}} />
+      <AuthForm client:load type="register" />
 
       <div class="relative my-8">
         <div class="absolute inset-0 flex items-center">
