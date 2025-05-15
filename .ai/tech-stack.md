@@ -16,5 +16,16 @@ AI - Komunikacja z modelami przez usługę Openrouter.ai:
 - Pozwala na ustawianie limitów finansowych na klucze API
 
 CI/CD i Hosting:
-- Github Actions do tworzenia pipeline’ów CI/CD
+- Github Actions do tworzenia pipeline'ów CI/CD
 - DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
+
+Testy:
+- Vitest i React Testing Library do testów jednostkowych:
+  - Vitest zapewnia szybkie wykonywanie testów i integrację z React
+  - React Testing Library pozwala na testowanie komponentów React w sposób zbliżony do interakcji użytkownika
+- Playwright do testów E2E:
+  - Pozwala na automatyzację testów w różnych przeglądarkach
+  - Umożliwia testowanie pełnych ścieżek użytkownika
+- ESLint i Prettier do statycznej analizy kodu:
+  - ESLint wykrywa potencjalne błędy i problemy z jakością kodu
+  - Prettier zapewnia spójne formatowanie kodu

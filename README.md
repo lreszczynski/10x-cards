@@ -16,6 +16,10 @@
   - Supabase for database and authentication
 - **AI Integration**:
   - Openrouter.ai for communication with various language models
+- **Testing**:
+  - Vitest and React Testing Library for unit testing
+  - Playwright for E2E testing
+  - ESLint and Prettier for static code analysis
 - **CI/CD & Hosting**:
   - GitHub Actions for continuous integration and deployment
   - DigitalOcean for hosting (via Docker image)

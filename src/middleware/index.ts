@@ -19,17 +19,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
   console.log('Request path:', url.pathname);
   console.log('Request method:', request.method);
 
-  // Skip auth check for public paths and all API routes
-  if (PUBLIC_PATHS.includes(url.pathname) || url.pathname.startsWith('/api/')) {
-    console.log('Skipping auth check for:', url.pathname);
-    return next();
-  }
-
   try {
     const supabase = createSupabaseServerInstance({
       cookies,
       headers: request.headers,
     });
+
+    // Make supabase available to all routes
+    context.locals.supabase = supabase;
+
+    // Skip auth check for public paths
+    if (PUBLIC_PATHS.includes(url.pathname)) {
+      console.log('Skipping auth check for:', url.pathname);
+      return next();
+    }
 
     // Get user session
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -38,13 +41,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
       console.error('Auth error in middleware:', error);
     }
 
-    if (!user && !PUBLIC_PATHS.includes(url.pathname)) {
+    // For API routes, let them handle their own auth
+    if (url.pathname.startsWith('/api/')) {
+      return next();
+    }
+
+    // For non-API routes, redirect to login if no user
+    if (!user) {
       console.log('No user found, redirecting to login');
       return redirect('/auth/login');
     }
 
-    // Make user and supabase available to all routes
-    context.locals.supabase = supabase;
+    // Make user available to all routes
     context.locals.user = user;
 
     return next();

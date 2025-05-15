@@ -2,7 +2,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../db/database.types";
 import type { FlashcardProposalDto, GenerationResponseDto } from "../../types";
 import { createHash } from "crypto";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import { OpenRouterService } from "./openrouter.service";
 
 export class AIGenerationService {
@@ -115,7 +114,7 @@ Your response should only contain the json and nothing else
       };
     } catch (error) {
       // Log error and rethrow
-      await this.logError(error);
+      await this.logError(error, userId);
       throw error;
     }
   }
@@ -152,7 +151,7 @@ Your response should only contain the json and nothing else
     return createHash("md5").update(text).digest("hex");
   }
 
-  private async logError(error: unknown): Promise<void> {
+  private async logError(error: unknown, userId: string): Promise<void> {
     try {
       await this.supabase.from("generation_error_logs").insert({
         error_code: "GENERATION_ERROR",
@@ -160,7 +159,7 @@ Your response should only contain the json and nothing else
         model: this.openRouter.modelName,
         source_text_hash: "",
         source_text_length: 0,
-        user_id: DEFAULT_USER_ID,
+        user_id: userId,
       });
     } catch (logError) {
       console.error("Failed to log error:", logError);

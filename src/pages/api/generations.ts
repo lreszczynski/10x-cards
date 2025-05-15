@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import type { CreateGenerationCommand, GenerationResponseDto } from "../../types";
 import { AIGenerationService } from "../../lib/services/ai-generation.service";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
+import { getUser } from "../../lib/auth";
 
 export const prerender = false;
 
@@ -17,6 +17,15 @@ const createGenerationSchema = z.object({
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const { supabase } = locals;
+
+    // Check authentication
+    const user = await getUser({ locals });
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
     // Parse and validate request body
     const body = await request.json();
@@ -33,12 +42,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Initialize AI service and generate flashcards
-    const aiService = new AIGenerationService(supabase,{});
+    const aiService = new AIGenerationService(supabase, {});
 
     try {
       const generationResult = await aiService.generateFlashcards(
         result.data.source_text,
-        DEFAULT_USER_ID
+        user.id
       );
 
       return new Response(

@@ -36,19 +36,15 @@ export function FlashcardInputForm({ onSubmit }: FlashcardInputFormProps) {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     setText(newText);
-    // Only show validation errors while typing if text exceeds max length
-    if (newText.length > 10000) {
-      setError(validateText(newText));
-    } else {
-      setError(null);
-    }
+    // Show validation errors while typing for both min and max length
+    setError(validateText(newText));
   };
 
   const characterCount = text.length;
   const isValid = characterCount >= 1000 && characterCount <= 10000;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} role="form">
       <Card>
         <CardContent className="pt-6">
           <Textarea
