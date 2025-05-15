@@ -1,5 +1,5 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerInstance } from '@/db/supabase.server';
+import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "@/db/supabase.server";
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         {
           status: 400,
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
@@ -43,22 +43,22 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
   } catch (err) {
-    console.error('Registration error:', err);
+    console.error("Registration error:", err);
     return new Response(
       JSON.stringify({
-        error: 'An unexpected error occurred during registration',
+        error: "An unexpected error occurred during registration",
       }),
       {
         status: 500,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
   }
-}; 
+};

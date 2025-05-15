@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Loader2 } from "lucide-react";
 
 interface StatsProps {
   userId: string;
@@ -22,11 +22,7 @@ const StatCard = ({ title, value, loading }: { title: string; value: number; loa
     </CardHeader>
     <CardContent>
       <div className="text-2xl font-bold flex items-center">
-        {loading ? (
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        ) : (
-          value
-        )}
+        {loading ? <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /> : value}
       </div>
     </CardContent>
   </Card>
@@ -45,10 +41,10 @@ export function Stats({ userId }: StatsProps) {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/dashboard/stats');
+        const response = await fetch("/api/dashboard/stats");
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch statistics');
+          throw new Error(errorData.error || "Failed to fetch statistics");
         }
         const data = await response.json();
         setStats({
@@ -57,11 +53,11 @@ export function Stats({ userId }: StatsProps) {
           error: null,
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
-        setStats(prev => ({
+        console.error("Error fetching stats:", error);
+        setStats((prev) => ({
           ...prev,
           loading: false,
-          error: error instanceof Error ? error.message : 'Failed to load statistics',
+          error: error instanceof Error ? error.message : "Failed to load statistics",
         }));
       }
     };
@@ -81,26 +77,10 @@ export function Stats({ userId }: StatsProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <StatCard 
-        title="Total Flashcards" 
-        value={stats.totalFlashcards} 
-        loading={stats.loading} 
-      />
-      <StatCard 
-        title="AI Generated" 
-        value={stats.aiGeneratedCount} 
-        loading={stats.loading} 
-      />
-      <StatCard 
-        title="AI Edited" 
-        value={stats.aiEditedCount} 
-        loading={stats.loading} 
-      />
-      <StatCard 
-        title="Manual" 
-        value={stats.manualCount} 
-        loading={stats.loading} 
-      />
+      <StatCard title="Total Flashcards" value={stats.totalFlashcards} loading={stats.loading} />
+      <StatCard title="AI Generated" value={stats.aiGeneratedCount} loading={stats.loading} />
+      <StatCard title="AI Edited" value={stats.aiEditedCount} loading={stats.loading} />
+      <StatCard title="Manual" value={stats.manualCount} loading={stats.loading} />
     </div>
   );
-} 
+}

@@ -1,23 +1,23 @@
-import { defineMiddleware } from 'astro:middleware';
-import { createSupabaseServerInstance } from '@/db/supabase.server';
+import { defineMiddleware } from "astro:middleware";
+import { createSupabaseServerInstance } from "@/db/supabase.server";
 
 // Public paths that don't require authentication
 const PUBLIC_PATHS = [
-  '/auth/login',
-  '/auth/register',
-  '/auth/reset-password',
-  '/auth/callback',
-  '/api/auth/login',
-  '/api/auth/register',
-  '/api/auth/reset-password',
-  '/',
+  "/auth/login",
+  "/auth/register",
+  "/auth/reset-password",
+  "/auth/callback",
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/reset-password",
+  "/",
 ];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { url, cookies, request, redirect } = context;
 
-  console.log('Request path:', url.pathname);
-  console.log('Request method:', request.method);
+  console.log("Request path:", url.pathname);
+  console.log("Request method:", request.method);
 
   try {
     const supabase = createSupabaseServerInstance({
@@ -30,26 +30,29 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     // Skip auth check for public paths
     if (PUBLIC_PATHS.includes(url.pathname)) {
-      console.log('Skipping auth check for:', url.pathname);
+      console.log("Skipping auth check for:", url.pathname);
       return next();
     }
 
     // Get user session
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
     if (error) {
-      console.error('Auth error in middleware:', error);
+      console.error("Auth error in middleware:", error);
     }
 
     // For API routes, let them handle their own auth
-    if (url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith("/api/")) {
       return next();
     }
 
     // For non-API routes, redirect to login if no user
     if (!user) {
-      console.log('No user found, redirecting to login');
-      return redirect('/auth/login');
+      console.log("No user found, redirecting to login");
+      return redirect("/auth/login");
     }
 
     // Make user available to all routes
@@ -57,7 +60,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     return next();
   } catch (err) {
-    console.error('Middleware error:', err);
+    console.error("Middleware error:", err);
     return next();
   }
-}); 
+});

@@ -18,23 +18,27 @@ System autentykacji będzie oparty o Supabase Auth, zintegrowany z Astro i React
 ### 2.1. Strony (Astro)
 
 #### `/auth/login`
+
 - Strona logowania z formularzem React
 - Obsługa przekierowania po udanym logowaniu
 - Linki do rejestracji i resetowania hasła
 - Server-side walidacja sesji
 
 #### `/auth/register`
+
 - Strona rejestracji z formularzem React
 - Walidacja danych wejściowych
 - Obsługa przekierowania po udanej rejestracji
 - Informacja o polityce prywatności i RODO
 
 #### `/auth/reset-password`
+
 - Strona resetowania hasła
 - Dwuetapowy proces: żądanie resetu i ustawienie nowego hasła
 - Walidacja tokenu resetu
 
 #### `/auth/verify`
+
 - Strona weryfikacji email
 - Obsługa tokenów weryfikacyjnych
 - Komunikaty o statusie weryfikacji
@@ -42,24 +46,28 @@ System autentykacji będzie oparty o Supabase Auth, zintegrowany z Astro i React
 ### 2.2. Komponenty React
 
 #### `AuthForm.tsx`
+
 ```typescript
 interface AuthFormProps {
-  type: 'login' | 'register' | 'reset';
+  type: "login" | "register" | "reset";
   onSubmit: (data: AuthFormData) => Promise<void>;
   isLoading: boolean;
 }
 ```
+
 - Reużywalny komponent formularza
 - Walidacja w czasie rzeczywistym
 - Obsługa błędów i komunikatów
 - Integracja z Shadcn/ui
 
 #### `PasswordStrengthIndicator.tsx`
+
 - Wskaźnik siły hasła podczas rejestracji
 - Wizualna reprezentacja wymagań hasła
 - Dynamiczna aktualizacja
 
 #### `AuthLayout.tsx`
+
 - Layout dla stron autoryzacji
 - Spójny wygląd i zachowanie
 - Responsywność
@@ -67,12 +75,14 @@ interface AuthFormProps {
 ### 2.3. Przepływ użytkownika
 
 1. **Logowanie**
+
    - Wprowadzenie email/hasło
    - Walidacja danych
    - Obsługa błędów logowania
    - Przekierowanie do dashboard
 
 2. **Rejestracja**
+
    - Formularz z walidacją w czasie rzeczywistym
    - Weryfikacja email
    - Utworzenie konta
@@ -104,31 +114,37 @@ interface AuthMiddlewareState {
 ### 3.2. Endpointy API
 
 #### POST `/api/auth/login`
+
 - Walidacja danych logowania
 - Obsługa sesji Supabase
 - Zwracanie JWT
 
 #### POST `/api/auth/register`
+
 - Walidacja danych rejestracji
 - Utworzenie konta w Supabase
 - Wysłanie emaila weryfikacyjnego
 
 #### POST `/api/auth/logout`
+
 - Wylogowanie użytkownika
 - Czyszczenie sesji
 - Przekierowanie
 
 #### POST `/api/auth/reset-password`
+
 - Inicjacja procesu resetu hasła
 - Wysłanie emaila z linkiem
 
 #### POST `/api/auth/verify-email`
+
 - Weryfikacja adresu email
 - Aktualizacja statusu konta
 
 ### 3.3. Serwisy
 
 #### `AuthService` (`src/lib/services/auth.service.ts`)
+
 ```typescript
 interface AuthService {
   login(email: string, password: string): Promise<AuthResponse>;
@@ -177,25 +193,22 @@ ALTER TABLE auth.users ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT F
 // src/lib/schemas/auth.schema.ts
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6)
+  password: z.string().min(6),
 });
 
-const registerSchema = loginSchema.extend({
-  confirmPassword: z.string(),
-  acceptTerms: z.boolean().refine(val => val === true)
-}).refine(data => data.password === data.confirmPassword);
+const registerSchema = loginSchema
+  .extend({
+    confirmPassword: z.string(),
+    acceptTerms: z.boolean().refine((val) => val === true),
+  })
+  .refine((data) => data.password === data.confirmPassword);
 ```
 
 ### 5.2. Typy błędów
 
 ```typescript
 // src/lib/types/auth.types.ts
-type AuthError =
-  | 'INVALID_CREDENTIALS'
-  | 'EMAIL_NOT_VERIFIED'
-  | 'ACCOUNT_EXISTS'
-  | 'WEAK_PASSWORD'
-  | 'SERVER_ERROR';
+type AuthError = "INVALID_CREDENTIALS" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_EXISTS" | "WEAK_PASSWORD" | "SERVER_ERROR";
 ```
 
 ## 6. Bezpieczeństwo i RODO
@@ -220,10 +233,10 @@ type AuthError =
 
 ```typescript
 // src/tests/auth.test.ts
-describe('AuthService', () => {
-  test('should handle login correctly');
-  test('should handle registration correctly');
-  test('should handle password reset correctly');
+describe("AuthService", () => {
+  test("should handle login correctly");
+  test("should handle registration correctly");
+  test("should handle password reset correctly");
 });
 ```
 
@@ -251,4 +264,4 @@ AUTH_COOKIE_DOMAIN=
 - [ ] Ustawienie domen CORS
 - [ ] Konfiguracja providera email
 - [ ] Testy bezpieczeństwa
-- [ ] Audyt RODO 
+- [ ] Audyt RODO

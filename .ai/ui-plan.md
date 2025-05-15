@@ -7,6 +7,7 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React 
 ## 2. Lista widoków
 
 - **Ekran autoryzacji**
+
   - Ścieżka: `/login` i `/register`
   - Główny cel: Umożliwienie użytkownikowi rejestracji i logowania.
   - Kluczowe informacje: Formularze logowania/rejestracji, walidacja pól (e-mail, hasło), komunikaty błędów.
@@ -14,13 +15,15 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React 
   - UX, dostępność i bezpieczeństwo: Responsywny design, prosty formularz, czytelne komunikaty błędów, wsparcie dla urządzeń mobilnych, zabezpieczenie przesyłania danych (JWT) oraz właściwa obsługa błędów.
 
 - **Widok generowania fiszek**
+
   - Ścieżka: `/generate`
   - Główny cel: Umożliwienie użytkownikowi generowanie propozycji fiszek przez AI i ich rewizję (akceptuj, edytuj, odrzuć)
   - Kluczowe informacje: Pole tekstowe do wprowadzania treści, lista propozycji fiszek wygenerowanych przez AI, przyciski akcji, edycji lub odrzucenia dla każdej fiszki
   - Kluczowe komponenty: Komponent wejscia tekstowego, przycisk "Generuj fiszki", lista fiszek, przyciski akcji (zapisz wszystkie, zapisz zaakceptowane), wskaźnik ładowania (skeleton), komunikaty o błędach
-  - UX, dostępność i bezpieczeństwo: Walidacja długości tekstu  (1000-10000 znaków), responsywność, czytelne komunikaty i inline komunikaty o błędach
+  - UX, dostępność i bezpieczeństwo: Walidacja długości tekstu (1000-10000 znaków), responsywność, czytelne komunikaty i inline komunikaty o błędach
 
 - **Widok listy fiszek**
+
   - Ścieżka: `/flashcards`
   - Główny cel: Przegląd, edycja i usuwanie istniejących fiszek.
   - Kluczowe informacje: Lista wszystkich fiszek (zarówno AI-generowanych, jak i ręcznie tworzonych), podgląd treści fiszki.
@@ -28,6 +31,7 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React 
   - UX, dostępność i bezpieczeństwo: Czytelny interfejs, łatwość edycji poprzez modale, ostrzeżenia przy usuwaniu oraz mechanizmy potwierdzające akcje.
 
 - **Panel użytkownika**
+
   - Ścieżka: `/profile`
   - Główny cel: Wyświetlenie informacji o koncie użytkownika.
   - Kluczowe informacje: Dane konta (e-mail, data rejestracji), przycisk wylogowania.
@@ -65,16 +69,16 @@ Architektura UI została zaprojektowana z użyciem Astro 5, TypeScript 5, React 
 
 ## 4. Układ i struktura nawigacji
 
-— **Gotowa nawigacja:** Dostępna jako górne menu w layoucie strony po zalogowaniu. 
-— **Elementy nawigacyjne:** Linki do widokow: "Generowanie fiszek", "Moje fiszki", "Profil" oraz przycisk wylogowania. 
-— **Responsywność:** W widoku mobilnym nawigacja przekształca się w menu hamburger, umożliwiając łatwy dostep do pozostalych widoków. 
-— **Przepływ:** Nawigacja umożliwia bezproblemowe przechodzenie między widokami, zachowując kontekst użytkownika i jego dane sesyjne. 
+— **Gotowa nawigacja:** Dostępna jako górne menu w layoucie strony po zalogowaniu.
+— **Elementy nawigacyjne:** Linki do widokow: "Generowanie fiszek", "Moje fiszki", "Profil" oraz przycisk wylogowania.
+— **Responsywność:** W widoku mobilnym nawigacja przekształca się w menu hamburger, umożliwiając łatwy dostep do pozostalych widoków.
+— **Przepływ:** Nawigacja umożliwia bezproblemowe przechodzenie między widokami, zachowując kontekst użytkownika i jego dane sesyjne.
 
-## 5. Kluczowe komponenty 
-— **Formularze uwierzytelnienia:** Komponenty logowania i rejestracji z obsługą walidacji. 
-— **Komponent generowania fiszek:** Z polem tekstowym i przyciskiem uruchamiającym proces generacji, z wskaźnikiem ładowania. 
+## 5. Kluczowe komponenty
+
+— **Formularze uwierzytelnienia:** Komponenty logowania i rejestracji z obsługą walidacji.
+— **Komponent generowania fiszek:** Z polem tekstowym i przyciskiem uruchamiającym proces generacji, z wskaźnikiem ładowania.
 — **Lista fiszek:** Interaktywny komponent wyświetlający listę fiszek z opcjami edycji i usuwania.
 — **Modal edycji:** Komponent umożliwiający edycję fiszek z walidacją danych przed zatwierdzeniem.
 — **Toast notifications:** Komponent do wyświetlania komunikatów o sukcesach oraz błędach.
-— **Menu nawigacji:** Elementy nawigacyjne ułatwiające przemieszczanie się między widokami. 
-
+— **Menu nawigacji:** Elementy nawigacyjne ułatwiające przemieszczanie się między widokami.

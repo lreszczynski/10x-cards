@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: 10x-cards/.nvmrc
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: 10x-cards/package-lock.json
 
       - name: Install dependencies
@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: 10x-cards/.nvmrc
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: 10x-cards/package-lock.json
 
       - name: Install dependencies
@@ -67,7 +67,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: 10x-cards/.nvmrc
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: 10x-cards/package-lock.json
 
       - name: Install dependencies
@@ -76,7 +76,7 @@ jobs:
 
       - name: Run tests
         working-directory: ./10x-cards
-        run: npm run test:coverage
+        run: npm run test
 
   build:
     runs-on: ubuntu-latest
@@ -91,7 +91,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: 10x-cards/.nvmrc
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: 10x-cards/package-lock.json
 
       - name: Install dependencies

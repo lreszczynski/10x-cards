@@ -49,13 +49,16 @@
 ## 2. Relacje między tabelami
 
 - W tabeli **flashcards**:
+
   - `user_id` → `users.id`
   - `generation_id` → `generations.id`
 
 - W tabeli **generations**:
+
   - `user_id` → `users.id`
 
 - W tabeli **generation_error_logs**:
+
   - `user_id` → `users.id`
 
 - każda fiszka (flashcards) może opcjonalnie odnosić się do jednej generacji (generations) poprzez generation_id.
@@ -63,10 +66,12 @@
 ## 3. Indeksy
 
 - **flashcards**:
+
   - Indeks na `user_id`
   - Indeks na `generation_id`
 
 - **generations**:
+
   - Indeks na `user_id`
 
 - **generation_error_logs**:

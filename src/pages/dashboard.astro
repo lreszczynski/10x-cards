@@ -1,9 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { Navbar } from '../components/Navbar';
-import { Stats } from '../components/dashboard/Stats';
-import { QuickActions } from '../components/dashboard/QuickActions';
-import { getUser } from '../lib/auth';
+import Layout from "../layouts/Layout.astro";
+import { Navbar } from "../components/Navbar";
+import { Stats } from "../components/dashboard/Stats";
+import { QuickActions } from "../components/dashboard/QuickActions";
+import { getUser } from "../lib/auth";
 
 export const prerender = false;
 
@@ -11,24 +11,24 @@ const user = await getUser(Astro);
 
 // Redirect if not logged in
 if (!user) {
-  return Astro.redirect('/auth/login');
+  return Astro.redirect("/auth/login");
 }
 ---
 
 <Layout title="Dashboard | 10x Cards">
   <Navbar user={user} client:load />
-  
+
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
-    
+
     <div class="grid gap-6 md:grid-cols-2">
       <div class="col-span-2">
         <Stats client:load userId={user.id} />
       </div>
-      
+
       <div class="col-span-2 md:col-span-1">
         <QuickActions />
       </div>
     </div>
   </main>
-</Layout> 
+</Layout>

@@ -6,12 +6,12 @@ export interface ModelOptions {
 
 export interface RequestPayload {
   messages: {
-    role: 'system' | 'user';
+    role: "system" | "user";
     content: string;
   }[];
   model: string;
   response_format?: {
-    type: 'json_schema';
+    type: "json_schema";
     json_schema: {
       name: string;
       strict: boolean;
@@ -25,4 +25,4 @@ export interface ResponseType {
   usage: {
     total_tokens: number;
   };
-} 
+}

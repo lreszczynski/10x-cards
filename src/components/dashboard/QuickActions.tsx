@@ -1,6 +1,6 @@
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { PlusCircle, List, Settings } from 'lucide-react';
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { PlusCircle, List, Settings } from "lucide-react";
 
 export function QuickActions() {
   return (
@@ -15,14 +15,14 @@ export function QuickActions() {
             Generate New Flashcards
           </a>
         </Button>
-        
+
         <Button asChild className="w-full justify-start" variant="outline">
           <a href="/flashcards">
             <List className="mr-2 h-4 w-4" />
             View All Flashcards
           </a>
         </Button>
-        
+
         <Button asChild className="w-full justify-start" variant="outline">
           <a href="/settings">
             <Settings className="mr-2 h-4 w-4" />
@@ -32,4 +32,4 @@ export function QuickActions() {
       </CardContent>
     </Card>
   );
-} 
+}

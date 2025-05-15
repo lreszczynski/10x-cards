@@ -1,9 +1,9 @@
-import { Button } from './ui/button'
-import type { User } from '@supabase/supabase-js'
-import { useState } from 'react'
+import { Button } from "./ui/button";
+import type { User } from "@supabase/supabase-js";
+import { useState } from "react";
 
 interface NavbarProps {
-  user: User | null
+  user: User | null;
 }
 
 export function Navbar({ user }: NavbarProps) {
@@ -12,21 +12,21 @@ export function Navbar({ user }: NavbarProps) {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to sign out');
+        throw new Error("Failed to sign out");
       }
 
       // Redirect to login page after successful logout
-      window.location.href = '/auth/login';
+      window.location.href = "/auth/login";
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error("Sign out error:", error);
       // You might want to show an error message to the user here
     } finally {
       setIsLoading(false);
@@ -42,16 +42,9 @@ export function Navbar({ user }: NavbarProps) {
         <div className="flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">
-                {user.email}
-              </span>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleSignOut}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Signing out...' : 'Sign Out'}
+              <span className="text-sm text-muted-foreground">{user.email}</span>
+              <Button variant="outline" size="sm" onClick={handleSignOut} disabled={isLoading}>
+                {isLoading ? "Signing out..." : "Sign Out"}
               </Button>
             </div>
           ) : (
@@ -62,5 +55,5 @@ export function Navbar({ user }: NavbarProps) {
         </div>
       </div>
     </nav>
-  )
-} 
+  );
+}

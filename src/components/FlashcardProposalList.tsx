@@ -1,4 +1,3 @@
-import type { FlashcardProposalDto } from "@/types";
 import { FlashcardProposalItem } from "./FlashcardProposalItem";
 import type { FlashcardProposalViewModel } from "./FlashcardGenerationView";
 
@@ -9,12 +8,7 @@ interface FlashcardProposalListProps {
   onEdit: (id: number, front: string, back: string) => void;
 }
 
-export function FlashcardProposalList({
-  proposals,
-  onAccept,
-  onReject,
-  onEdit,
-}: FlashcardProposalListProps) {
+export function FlashcardProposalList({ proposals, onAccept, onReject, onEdit }: FlashcardProposalListProps) {
   return (
     <div className="space-y-4">
       {proposals.map((proposal) => (
@@ -28,4 +22,4 @@ export function FlashcardProposalList({
       ))}
     </div>
   );
-} 
+}

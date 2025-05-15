@@ -22,12 +22,7 @@ interface FlashcardProposalItemProps {
   onEdit: (front: string, back: string) => void;
 }
 
-export function FlashcardProposalItem({
-  proposal,
-  onAccept,
-  onReject,
-  onEdit,
-}: FlashcardProposalItemProps) {
+export function FlashcardProposalItem({ proposal, onAccept, onReject, onEdit }: FlashcardProposalItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [front, setFront] = useState(proposal.editedFront || proposal.front);
   const [back, setBack] = useState(proposal.editedBack || proposal.back);
@@ -51,8 +46,11 @@ export function FlashcardProposalItem({
         {isEditing ? (
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">Front</label>
+              <label htmlFor="front-textarea" className="text-sm font-medium mb-2 block">
+                Front
+              </label>
               <Textarea
+                id="front-textarea"
                 value={front}
                 onChange={(e) => setFront(e.target.value)}
                 placeholder="Front side of the flashcard"
@@ -61,8 +59,11 @@ export function FlashcardProposalItem({
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Back</label>
+              <label htmlFor="back-textarea" className="text-sm font-medium mb-2 block">
+                Back
+              </label>
               <Textarea
+                id="back-textarea"
                 value={back}
                 onChange={(e) => setBack(e.target.value)}
                 placeholder="Back side of the flashcard"
@@ -94,19 +95,12 @@ export function FlashcardProposalItem({
           </>
         ) : (
           <>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditing(true)}
-              disabled={proposal.accepted}
-            >
+            <Button variant="outline" onClick={() => setIsEditing(true)} disabled={proposal.accepted}>
               Edit
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  disabled={proposal.accepted}
-                >
+                <Button variant="destructive" disabled={proposal.accepted}>
                   Reject
                 </Button>
               </AlertDialogTrigger>
@@ -119,16 +113,11 @@ export function FlashcardProposalItem({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={onReject}>
-                    Reject
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={onReject}>Reject</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button
-              onClick={onAccept}
-              disabled={proposal.accepted}
-            >
+            <Button onClick={onAccept} disabled={proposal.accepted}>
               Accept
             </Button>
           </>
@@ -136,4 +125,4 @@ export function FlashcardProposalItem({
       </CardFooter>
     </Card>
   );
-} 
+}

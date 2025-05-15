@@ -27,21 +27,25 @@
 ## Getting Started Locally
 
 1. **Prerequisites**:
+
    - Node.js (version specified in `.nvmrc`: **22.14.0**)
    - Git
 
 2. **Clone the Repository**:
+
    ```bash
    git clone https://github.com/lreszczynski/10x-cards>
    cd 10x-cards
    ```
 
 3. **Install Dependencies**:
+
    ```bash
    npm install
    ```
 
 4. **Run the Development Server**:
+
    ```bash
    npm run dev
    ```
@@ -70,7 +74,7 @@
 
 10x-cards is designed to enable users to quickly create and manage flashcards for efficient learning through spaced repetition. Key features include:
 
-- **Automated AI Flashcard Generation**: 
+- **Automated AI Flashcard Generation**:
   - Users can paste text excerpts to receive AI-generated flashcard suggestions.
 - **Manual Flashcard Management**:
   - Create, edit, and delete flashcards manually.
@@ -87,4 +91,4 @@ This project is currently in the MVP stage and under active development.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details. 
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

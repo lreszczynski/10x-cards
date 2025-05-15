@@ -10,12 +10,7 @@ interface SaveFlashcardsButtonProps {
   saveMode: "all" | "accepted";
 }
 
-export function SaveFlashcardsButton({
-  proposals,
-  generationId,
-  onSuccess,
-  saveMode,
-}: SaveFlashcardsButtonProps) {
+export function SaveFlashcardsButton({ proposals, generationId, onSuccess, saveMode }: SaveFlashcardsButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,12 +21,14 @@ export function SaveFlashcardsButton({
 
       const flashcardsToSave = proposals
         .filter((p) => saveMode === "all" || p.accepted)
-        .map((p): CreateFlashcardCommandDto => ({
-          front: p.editedFront || p.front,
-          back: p.editedBack || p.back,
-          source: p.edited ? "ai-edited" : "ai-full",
-          generation_id: generationId,
-        }));
+        .map(
+          (p): CreateFlashcardCommandDto => ({
+            front: p.editedFront || p.front,
+            back: p.editedBack || p.back,
+            source: p.edited ? "ai-edited" : "ai-full",
+            generation_id: generationId,
+          })
+        );
 
       if (flashcardsToSave.length === 0) {
         setError(saveMode === "accepted" ? "No flashcards have been accepted" : "No flashcards to save");
@@ -60,16 +57,10 @@ export function SaveFlashcardsButton({
 
   return (
     <div className="space-y-2">
-      <Button
-        onClick={handleSave}
-        disabled={loading}
-        className="w-full"
-      >
+      <Button onClick={handleSave} disabled={loading} className="w-full">
         {loading ? "Saving..." : `Save ${saveMode === "accepted" ? "Accepted" : "All"} Flashcards`}
       </Button>
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );
-} 
+}

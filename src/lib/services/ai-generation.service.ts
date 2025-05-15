@@ -166,17 +166,17 @@ Your response should only contain the json and nothing else
     }
   }
 
-  private extractAndParseJson(text: any) {
+  private extractAndParseJson(text: string) {
     const match = text.match(/```json\s*([\s\S]*?)\s*```/);
-  
+
     let jsonText = "";
-  
+
     if (match && match[1]) {
       jsonText = match[1];
     } else {
       jsonText = text.trim();
     }
-  
+
     try {
       return JSON.parse(jsonText);
     } catch (error) {

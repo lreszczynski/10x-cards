@@ -1,9 +1,7 @@
-import type { APIRoute } from 'astro';
-import { z } from 'zod';
-import type { CreateFlashcardsCommand, CreateFlashcardCommandDto } from '../../types';
-import { supabaseClient } from '../../db/supabase.client';
-import { FlashcardsService } from '../../lib/services/flashcards.service';
-import { getUser } from '../../lib/auth';
+import type { APIRoute } from "astro";
+import { z } from "zod";
+import { FlashcardsService } from "../../lib/services/flashcards.service";
+import { getUser } from "../../lib/auth";
 
 // Disable static prerendering for this endpoint
 export const prerender = false;
@@ -15,12 +13,12 @@ const flashcardBaseSchema = z.object({
 });
 
 const manualFlashcardSchema = flashcardBaseSchema.extend({
-  source: z.literal('manual'),
+  source: z.literal("manual"),
   generation_id: z.literal(null),
 });
 
 const aiFlashcardSchema = flashcardBaseSchema.extend({
-  source: z.union([z.literal('ai-full'), z.literal('ai-edited')]),
+  source: z.union([z.literal("ai-full"), z.literal("ai-edited")]),
   generation_id: z.number().positive().int(),
 });
 
@@ -35,9 +33,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Check authentication
     const user = await getUser({ locals });
     if (!user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -46,30 +44,30 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const validationResult = createFlashcardsSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return new Response(JSON.stringify({ 
-        error: 'Invalid request data',
-        details: validationResult.error.errors 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Invalid request data",
+          details: validationResult.error.errors,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const flashcardsService = new FlashcardsService(locals.supabase);
-    const createdFlashcards = await flashcardsService.createFlashcards(
-      user.id,
-      validationResult.data.flashcards
-    );
+    const createdFlashcards = await flashcardsService.createFlashcards(user.id, validationResult.data.flashcards);
 
     return new Response(JSON.stringify(createdFlashcards), {
       status: 201,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error('Error processing flashcards creation:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+    console.error("Error processing flashcards creation:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
   }
-}; 
+};

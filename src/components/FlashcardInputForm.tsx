@@ -44,7 +44,7 @@ export function FlashcardInputForm({ onSubmit }: FlashcardInputFormProps) {
   const isValid = characterCount >= 1000 && characterCount <= 10000;
 
   return (
-    <form onSubmit={handleSubmit} role="form">
+    <form onSubmit={handleSubmit}>
       <Card>
         <CardContent className="pt-6">
           <Textarea
@@ -61,14 +61,11 @@ export function FlashcardInputForm({ onSubmit }: FlashcardInputFormProps) {
           </div>
         </CardContent>
         <CardFooter className="justify-end">
-          <Button 
-            type="submit" 
-            disabled={!isValid}
-          >
+          <Button type="submit" disabled={!isValid}>
             Generate Flashcards
           </Button>
         </CardFooter>
       </Card>
     </form>
   );
-} 
+}

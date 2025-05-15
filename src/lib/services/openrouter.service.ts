@@ -1,25 +1,23 @@
-import { z } from 'zod';
-import type { 
-  ModelOptions, 
-  RequestPayload, 
-  ResponseType
-} from './openrouter.types';
-import { log } from 'node_modules/astro/dist/core/logger/core';
+import { z } from "zod";
+import type { ModelOptions, RequestPayload, ResponseType } from "./openrouter.types";
 
 const ConfigSchema = z.object({
   apiKey: z.string().min(1),
   apiEndpoint: z.string().url(),
-  defaultModel: z.string().default('openrouter-gpt'),
-  defaultSystemMessage: z.string().default('You are a helpful assistant'),
+  defaultModel: z.string().default("openrouter-gpt"),
+  defaultSystemMessage: z.string().default("You are a helpful assistant"),
   maxRetries: z.number().default(3),
 });
 
 type ConfigType = z.infer<typeof ConfigSchema>;
 
 class OpenRouterError extends Error {
-  constructor(message: string, public readonly cause?: unknown) {
+  constructor(
+    message: string,
+    public readonly cause?: unknown
+  ) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
   }
 }
 
@@ -41,10 +39,10 @@ export class OpenRouterService {
       max_tokens: 200,
       top_p: 0.9,
     };
-    this.systemMessage = '';
-    this.modelName = '';
-    this._apiKey = '';
-    this._apiEndpoint = '';
+    this.systemMessage = "";
+    this.modelName = "";
+    this._apiKey = "";
+    this._apiEndpoint = "";
     this._maxRetries = 3;
   }
 
@@ -56,7 +54,7 @@ export class OpenRouterService {
       this.modelName = validatedConfig.defaultModel;
       this.systemMessage = validatedConfig.defaultSystemMessage;
     } catch (error) {
-      this._handleError('Invalid configuration provided');
+      this._handleError("Invalid configuration provided");
       throw error;
     }
   }
@@ -71,37 +69,33 @@ export class OpenRouterService {
       const response = await this._sendRequestWithRetry(payload);
       return this._parseResponse(response);
     } catch (error) {
-      this._handleError('Failed to send chat prompt');
+      this._handleError("Failed to send chat prompt");
       throw error;
     }
   }
 
-  private _buildRequestPayload(
-    systemMessage: string,
-    userMessage: string,
-    options?: ModelOptions
-  ): RequestPayload {
+  private _buildRequestPayload(systemMessage: string, userMessage: string, options?: ModelOptions): RequestPayload {
     return {
       messages: [
         {
-          role: 'system',
+          role: "system",
           content: systemMessage || this.systemMessage,
         },
         {
-          role: 'user',
+          role: "user",
           content: userMessage,
         },
       ],
       model: this.modelName,
       ...options,
       response_format: {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
-          name: 'ChatResponse',
+          name: "ChatResponse",
           strict: true,
           schema: {
-            message: 'string',
-            usage: { total_tokens: 'number' },
+            message: "string",
+            usage: { total_tokens: "number" },
           },
         },
       },
@@ -116,19 +110,17 @@ export class OpenRouterService {
       if (attempt >= this._maxRetries || !this._isRetryableError(error)) {
         throw error;
       }
-      
+
       const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
       return this._sendRequestWithRetry(payload, attempt + 1);
     }
   }
 
   private _isRetryableError(error: unknown): boolean {
     if (error instanceof Error) {
-      return error.message.includes('network') || 
-             error.message.includes('500') || 
-             error.message.includes('503');
+      return error.message.includes("network") || error.message.includes("500") || error.message.includes("503");
     }
     return false;
   }
@@ -137,10 +129,10 @@ export class OpenRouterService {
     console.log("Sending request to OpenRouter API:", this._apiEndpoint);
     console.log("Payload:", payload);
     const response = await fetch(this._apiEndpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this._apiKey}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this._apiKey}`,
       },
       body: JSON.stringify(payload),
     });
@@ -162,13 +154,12 @@ export class OpenRouterService {
           total_tokens: data.usage.total_tokens,
         },
       };
-    } catch (error) {
-      throw new OpenRouterError('Failed to parse API response');
+    } catch {
+      throw new OpenRouterError("Failed to parse API response");
     }
   }
-  
 
   private _handleError(message: string): void {
-    this._internalLogger.error('[OpenRouterService Error]:', message);
+    this._internalLogger.error("[OpenRouterService Error]:", message);
   }
-} 
+}

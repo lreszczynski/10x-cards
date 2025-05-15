@@ -14,7 +14,6 @@ export interface FlashcardProposalViewModel extends FlashcardProposalDto {
 }
 
 export function FlashcardGenerationView() {
-  const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [flashcardProposals, setFlashcardProposals] = useState<FlashcardProposalViewModel[]>([]);
@@ -24,7 +23,7 @@ export function FlashcardGenerationView() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch("/api/generations", {
         method: "POST",
         headers: {
@@ -39,15 +38,13 @@ export function FlashcardGenerationView() {
 
       const data: GenerationResponseDto = await response.json();
       setGenerationId(data.id);
-      
+
       // Transform API response to view model
-      const proposals: FlashcardProposalViewModel[] = data.flashcards_proposals.map(
-        (proposal) => ({
-          ...proposal,
-          accepted: false,
-          edited: false,
-        })
-      );
+      const proposals: FlashcardProposalViewModel[] = data.flashcards_proposals.map((proposal) => ({
+        ...proposal,
+        accepted: false,
+        edited: false,
+      }));
 
       setFlashcardProposals(proposals);
     } catch (err) {
@@ -59,16 +56,12 @@ export function FlashcardGenerationView() {
 
   const handleAcceptFlashcard = (id: number) => {
     setFlashcardProposals((prev) =>
-      prev.map((proposal) =>
-        proposal.id === id ? { ...proposal, accepted: true } : proposal
-      )
+      prev.map((proposal) => (proposal.id === id ? { ...proposal, accepted: true } : proposal))
     );
   };
 
   const handleRejectFlashcard = (id: number) => {
-    setFlashcardProposals((prev) =>
-      prev.filter((proposal) => proposal.id !== id)
-    );
+    setFlashcardProposals((prev) => prev.filter((proposal) => proposal.id !== id));
   };
 
   const handleEditFlashcard = (id: number, front: string, back: string) => {
@@ -91,28 +84,22 @@ export function FlashcardGenerationView() {
     // Reset the view
     setFlashcardProposals([]);
     setGenerationId(null);
-    setInputText("");
   };
 
   return (
     <div className="space-y-8">
       <FlashcardInputForm onSubmit={handleGenerateFlashcards} />
-      
-      {error && (
-        <div className="bg-destructive/15 text-destructive px-4 py-3 rounded-md">
-          {error}
-        </div>
-      )}
-      
+
+      {error && <div className="bg-destructive/15 text-destructive px-4 py-3 rounded-md">{error}</div>}
+
       {loading ? (
         <LoadingSkeleton />
       ) : (
-        flashcardProposals.length > 0 && generationId && (
+        flashcardProposals.length > 0 &&
+        generationId && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <p className="text-muted-foreground">
-                {flashcardProposals.length} flashcards generated
-              </p>
+              <p className="text-muted-foreground">{flashcardProposals.length} flashcards generated</p>
               <div className="flex space-x-2">
                 <SaveFlashcardsButton
                   proposals={flashcardProposals}
@@ -139,4 +126,4 @@ export function FlashcardGenerationView() {
       )}
     </div>
   );
-} 
+}

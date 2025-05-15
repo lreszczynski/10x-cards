@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { AuthForm } from '@/components/auth/AuthForm'
-import { createSupabaseServerInstance } from '@/db/supabase.server'
+import { AuthForm } from "@/components/auth/AuthForm";
+import { createSupabaseServerInstance } from "@/db/supabase.server";
 
 export const prerender = false;
 
@@ -12,10 +12,12 @@ const supabase = createSupabaseServerInstance({
 });
 
 // If user is already logged in, redirect to generate page
-const { data: { user } } = await supabase.auth.getUser();
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 if (user) {
-  return Astro.redirect('/generate');
+  return Astro.redirect("/generate");
 }
 ---
 
@@ -24,16 +26,14 @@ if (user) {
     <div class="max-w-md mx-auto w-full py-8">
       <div class="flex flex-col space-y-2 text-center mb-8">
         <h1 class="text-4xl font-bold tracking-tight">Create an account</h1>
-        <p class="text-lg text-muted-foreground">
-          Enter your email below to create your account
-        </p>
+        <p class="text-lg text-muted-foreground">Enter your email below to create your account</p>
       </div>
 
       <AuthForm client:load type="register" />
 
       <div class="relative my-8">
         <div class="absolute inset-0 flex items-center">
-          <span class="w-full border-t" />
+          <span class="w-full border-t"></span>
         </div>
         <div class="relative flex justify-center text-xs uppercase">
           <span class="bg-background px-2 text-muted-foreground">Or continue with</span>
@@ -42,22 +42,16 @@ if (user) {
 
       <div class="text-sm text-center">
         Already have an account?{" "}
-        <a href="/auth/login" class="underline">
-          Sign in
-        </a>
+        <a href="/auth/login" class="underline"> Sign in </a>
       </div>
 
       <p class="px-8 text-center text-sm text-muted-foreground mt-4">
         By clicking continue, you agree to our{" "}
-        <a href="/terms" class="underline hover:text-primary">
-          Terms of Service
-        </a>
+        <a href="/terms" class="underline hover:text-primary"> Terms of Service </a>
         {" "}and{" "}
-        <a href="/privacy" class="underline hover:text-primary">
-          Privacy Policy
-        </a>
+        <a href="/privacy" class="underline hover:text-primary"> Privacy Policy </a>
         .
       </p>
     </div>
   </div>
-</Layout> 
+</Layout>

@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import type { CreateGenerationCommand, GenerationResponseDto } from "../../types";
 import { AIGenerationService } from "../../lib/services/ai-generation.service";
 import { getUser } from "../../lib/auth";
 
@@ -11,7 +10,7 @@ const createGenerationSchema = z.object({
   source_text: z
     .string()
     .min(1000, "Text must be at least 1000 characters long")
-    .max(10000, "Text must not exceed 10000 characters")
+    .max(10000, "Text must not exceed 10000 characters"),
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -21,9 +20,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Check authentication
     const user = await getUser({ locals });
     if (!user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -33,9 +32,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     if (!result.success) {
       return new Response(
-        JSON.stringify({ 
-          error: "Invalid request data", 
-          details: result.error.errors 
+        JSON.stringify({
+          error: "Invalid request data",
+          details: result.error.errors,
         }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
@@ -45,40 +44,33 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const aiService = new AIGenerationService(supabase, {});
 
     try {
-      const generationResult = await aiService.generateFlashcards(
-        result.data.source_text,
-        user.id
-      );
+      const generationResult = await aiService.generateFlashcards(result.data.source_text, user.id);
 
-      return new Response(
-        JSON.stringify(generationResult),
-        { 
-          status: 201,
-          headers: { "Content-Type": "application/json" }
-        }
-      );
+      return new Response(JSON.stringify(generationResult), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      });
     } catch (genError) {
       console.error("Flashcard generation error:", genError);
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: "Failed to generate flashcards",
           message: genError instanceof Error ? genError.message : "Unknown generation error",
-          details: genError instanceof Error ? genError.stack : undefined
+          details: genError instanceof Error ? genError.stack : undefined,
         }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
-
   } catch (error) {
     console.error("Error processing generation request:", error);
-    
+
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: "Internal server error",
         message: error instanceof Error ? error.message : "Unknown error occurred",
-        details: error instanceof Error ? error.stack : undefined
+        details: error instanceof Error ? error.stack : undefined,
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
-}; 
+};

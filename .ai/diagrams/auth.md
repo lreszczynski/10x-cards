@@ -3,7 +3,7 @@
 ```mermaid
 sequenceDiagram
     autonumber
-    
+
     participant Browser
     participant Middleware
     participant API
@@ -18,11 +18,11 @@ sequenceDiagram
     SupabaseAuth-->>API: Zwrot JWT + refresh token
     API-->>Browser: Zapisanie tokenów w cookies
     deactivate API
-    
+
     Browser->>Middleware: Żądanie chronionej strony
     activate Middleware
     Middleware->>SupabaseAuth: Weryfikacja JWT
-    
+
     alt Token ważny
         SupabaseAuth-->>Middleware: Sesja aktywna
         Middleware-->>Browser: Dostęp do zasobu
@@ -44,7 +44,7 @@ sequenceDiagram
     activate API
     API->>API: Walidacja danych (Zod)
     API->>SupabaseAuth: Utworzenie konta
-    
+
     alt Rejestracja udana
         SupabaseAuth-->>API: Potwierdzenie + tokeny
         API->>Email: Wysłanie emaila powitalnego
@@ -63,11 +63,11 @@ sequenceDiagram
     SupabaseAuth->>Email: Wysłanie linku resetującego
     Email-->>Browser: Email z linkiem
     deactivate API
-    
+
     Browser->>API: POST /api/auth/reset-password {token, new_password}
     activate API
     API->>SupabaseAuth: Weryfikacja tokenu + zmiana hasła
-    
+
     alt Reset udany
         SupabaseAuth-->>API: Potwierdzenie
         API-->>Browser: Przekierowanie do logowania
@@ -85,4 +85,4 @@ sequenceDiagram
     SupabaseAuth-->>API: Potwierdzenie
     API-->>Browser: Usunięcie tokenów + przekierowanie
     deactivate API
-``` 
+```
