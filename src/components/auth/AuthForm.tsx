@@ -143,7 +143,7 @@ export function AuthForm({ type }: AuthFormProps) {
         }
 
         console.log("Login successful, redirecting...");
-        window.location.href = "/generate";
+        window.location.href = "/dashboard";
       } else if (type === "register") {
         const response = await fetch("/api/auth/register", {
           method: "POST",

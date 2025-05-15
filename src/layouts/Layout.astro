@@ -1,26 +1,53 @@
 ---
-import "../styles/global.css";
-import { Toaster } from "@/components/ui/sonner";
+import "@/styles/global.css";
+import { ViewTransitions } from "astro:transitions";
 
 interface Props {
-  title?: string;
+  title: string;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Prevent flash of incorrect theme -->
+    <script is:inline>
+      {
+        const storedTheme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
+      }
+    </script>
     <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
+
+    <!-- Handle theme persistence during view transitions -->
+    <script>
+      {
+        document.addEventListener("astro:after-swap", () => {
+          const storedTheme = localStorage.getItem("theme");
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+          if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        });
+      }
+    </script>
   </head>
   <body>
     <slot />
-    <Toaster richColors closeButton client:only="react" />
   </body>
 </html>
 

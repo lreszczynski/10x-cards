@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface NavbarProps {
   user: User | null;
@@ -36,10 +37,11 @@ export function Navbar({ user }: NavbarProps) {
   return (
     <nav className="border-b">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <a href="/" className="text-xl font-bold">
+        <a href={user ? "/dashboard" : "/"} className="text-xl font-bold">
           10x Cards
         </a>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {user ? (
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">{user.email}</span>

@@ -56,11 +56,20 @@ const reactConfig = tseslint.config({
   },
 });
 
+// Configuration for Astro script tags
+const astroScriptConfig = {
+  files: ["**/*.astro/*.js", "*.astro/*.js", "**/*.astro/*.ts", "*.astro/*.ts"],
+  rules: {
+    "prettier/prettier": "off",
+  },
+};
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   baseConfig,
   jsxA11yConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],
-  eslintPluginPrettier
+  eslintPluginPrettier,
+  astroScriptConfig
 );

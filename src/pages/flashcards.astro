@@ -1,0 +1,32 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { Navbar } from "@/components/Navbar";
+import { FlashcardsView } from "@/components/FlashcardsView";
+import { createSupabaseServerInstance } from "@/db/supabase.server";
+
+export const prerender = false;
+
+// Get supabase instance
+const supabase = createSupabaseServerInstance({
+  cookies: Astro.cookies,
+  headers: Astro.request.headers,
+});
+
+// Check if user is authenticated
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+// Redirect to login if not authenticated
+if (!user) {
+  return Astro.redirect("/auth/login");
+}
+---
+
+<Layout title="My Flashcards">
+  <Navbar client:load user={user} />
+  <div class="container mx-auto py-8">
+    <h1 class="text-4xl font-bold mb-8">My Flashcards</h1>
+    <FlashcardsView client:load />
+  </div>
+</Layout>
