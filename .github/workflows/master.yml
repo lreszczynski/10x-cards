@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          path: 10x-cards
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -19,6 +21,7 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Install dependencies
+        working-directory: ./10x-cards
         run: npm ci
 
   lint:
@@ -26,9 +29,11 @@ jobs:
     needs: setup
     steps:
       - name: Run ESLint
+        working-directory: ./10x-cards
         run: npm run lint
 
       - name: Run Prettier
+        working-directory: ./10x-cards
         run: npm run format
 
   test:
@@ -36,6 +41,7 @@ jobs:
     needs: setup
     steps:
       - name: Run tests
+        working-directory: ./10x-cards
         run: npm run test:coverage
 
   build:
@@ -43,4 +49,5 @@ jobs:
     needs: setup
     steps:
       - name: Build project
+        working-directory: ./10x-cards
         run: npm run build
