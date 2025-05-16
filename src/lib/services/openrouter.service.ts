@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { ModelOptions, RequestPayload, ResponseType } from "./openrouter.types";
+import { logger } from "../../utils/logger";
 
 const ConfigSchema = z.object({
   apiKey: z.string().min(1),
@@ -126,8 +127,8 @@ export class OpenRouterService {
   }
 
   private async _sendRequest(payload: RequestPayload): Promise<Response> {
-    console.log("Sending request to OpenRouter API:", this._apiEndpoint);
-    console.log("Payload:", payload);
+    logger.info("Sending request to OpenRouter API:", this._apiEndpoint);
+    logger.info("Payload:", payload);
     const response = await fetch(this._apiEndpoint, {
       method: "POST",
       headers: {
@@ -136,7 +137,7 @@ export class OpenRouterService {
       },
       body: JSON.stringify(payload),
     });
-    console.log("TEST", response);
+    logger.info("TEST", response);
     if (!response.ok) {
       throw new OpenRouterError(`API request failed: ${response.status} ${response.statusText}`);
     }
@@ -147,7 +148,7 @@ export class OpenRouterService {
   private async _parseResponse(response: Response): Promise<ResponseType> {
     try {
       const data = await response.json();
-      console.log("Raw OpenRouter API Response:", data);
+      logger.info("Raw OpenRouter API Response:", data);
       return {
         message: data.choices[0].message.content,
         usage: {

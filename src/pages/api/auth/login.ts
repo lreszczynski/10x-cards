@@ -1,16 +1,17 @@
 import type { APIRoute } from "astro";
 import { createSupabaseServerInstance } from "@/db/supabase.server";
+import { logger } from "../../../utils/logger";
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  console.log("Login request received");
+  logger.info("Login request received");
 
   try {
     // Validate content type
     const contentType = request.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-      console.error("Invalid content type:", contentType);
+      logger.error("Invalid content type:", contentType);
       return new Response(
         JSON.stringify({
           error: "Content-Type must be application/json",
@@ -23,7 +24,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     const body = await request.json();
-    console.log("Request body received:", { email: body.email, hasPassword: !!body.password });
+    logger.info("Request body received:", { email: body.email, hasPassword: !!body.password });
 
     if (!body.email || !body.password) {
       return new Response(
@@ -42,7 +43,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       headers: request.headers,
     });
 
-    console.log("Attempting Supabase auth...");
+    logger.info("Attempting Supabase auth...");
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: body.email,
@@ -50,7 +51,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     });
 
     if (error) {
-      console.error("Supabase auth error:", error);
+      logger.error("Supabase auth error:", error);
       return new Response(
         JSON.stringify({
           error: error.message,
@@ -66,7 +67,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     // Check if we have a user in the response
     if (!data.user) {
-      console.error("No user data in successful response");
+      logger.error("No user data in successful response");
       return new Response(
         JSON.stringify({
           error: "Authentication failed",
@@ -80,7 +81,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    console.log("Login successful for:", data.user.email);
+    logger.info("Login successful for:", data.user.email);
 
     // Return minimal user data
     return new Response(
@@ -98,7 +99,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     );
   } catch (err) {
-    console.error("Login error:", err);
+    logger.error("Login error:", err);
     return new Response(
       JSON.stringify({
         error: err instanceof Error ? err.message : "Internal server error",

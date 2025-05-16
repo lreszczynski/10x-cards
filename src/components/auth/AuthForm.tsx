@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
+import { logger } from "../../utils/logger";
 
 export interface AuthFormData {
   email: string;
@@ -98,7 +99,7 @@ export function AuthForm({ type }: AuthFormProps) {
 
     try {
       if (type === "login") {
-        console.log("Sending login request...");
+        logger.info("Sending login request...");
 
         const response = await fetch("/api/auth/login", {
           method: "POST",
@@ -112,25 +113,25 @@ export function AuthForm({ type }: AuthFormProps) {
           }),
         });
 
-        console.log("Response status:", response.status);
-        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+        logger.info("Response status:", response.status);
+        logger.info("Response headers:", Object.fromEntries(response.headers.entries()));
 
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          console.error("Unexpected response type:", contentType);
+          logger.error("Unexpected response type:", contentType);
           const text = await response.text();
-          console.error("Response body:", text);
+          logger.error("Response body:", text);
           throw new Error("Server returned an invalid response");
         }
 
         const text = await response.text();
-        console.log("Response text:", text);
+        logger.info("Response text:", text);
 
         let data;
         try {
           data = JSON.parse(text);
         } catch (e) {
-          console.error("Failed to parse JSON:", e);
+          logger.error("Failed to parse JSON:", e);
           throw new Error("Invalid response format from server");
         }
 
@@ -142,7 +143,7 @@ export function AuthForm({ type }: AuthFormProps) {
           throw new Error("No user data received");
         }
 
-        console.log("Login successful, redirecting...");
+        logger.info("Login successful, redirecting...");
         window.location.href = "/dashboard";
       } else if (type === "register") {
         const response = await fetch("/api/auth/register", {
@@ -174,7 +175,7 @@ export function AuthForm({ type }: AuthFormProps) {
         }
       }
     } catch (err: Error | unknown) {
-      console.error("Auth error:", err);
+      logger.error("Auth error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);

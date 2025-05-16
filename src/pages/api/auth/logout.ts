@@ -1,10 +1,11 @@
 import type { APIRoute } from "astro";
 import { createSupabaseServerInstance } from "@/db/supabase.server";
+import { logger } from "../../../utils/logger";
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  console.log("Logout request received");
+  logger.info("Logout request received");
 
   try {
     const supabase = createSupabaseServerInstance({
@@ -15,7 +16,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      console.error("Logout error:", error);
+      logger.error("Logout error:", error);
       return new Response(
         JSON.stringify({
           error: error.message,
@@ -29,7 +30,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    console.log("Logout successful");
+    logger.info("Logout successful");
 
     return new Response(
       JSON.stringify({
@@ -43,7 +44,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     );
   } catch (err) {
-    console.error("Logout error:", err);
+    logger.error("Logout error:", err);
     return new Response(
       JSON.stringify({
         error: err instanceof Error ? err.message : "Internal server error",

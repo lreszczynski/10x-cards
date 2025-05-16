@@ -3,6 +3,7 @@ import type { Database } from "../../db/database.types";
 import type { FlashcardProposalDto, GenerationResponseDto } from "../../types";
 import { createHash } from "crypto";
 import { OpenRouterService } from "./openrouter.service";
+import { logger } from "../../utils/logger";
 
 export class AIGenerationService {
   private readonly openRouter: OpenRouterService;
@@ -127,9 +128,9 @@ Your response should only contain the json and nothing else
         top_p: 0.9,
       });
 
-      console.log("response:", response);
+      logger.info("response:", response);
       const parsedResponse = this.extractAndParseJson(response.message);
-      console.log("Parsed response:", parsedResponse);
+      logger.info("Parsed response:", parsedResponse);
 
       if (!parsedResponse.flashcards || !Array.isArray(parsedResponse.flashcards)) {
         throw new Error("Invalid response format from AI service");
@@ -142,7 +143,7 @@ Your response should only contain the json and nothing else
         source: "ai-full",
       }));
     } catch (error) {
-      console.error("Error calling AI service:", error);
+      logger.error("Error calling AI service:", error);
       throw error;
     }
   }
@@ -162,7 +163,7 @@ Your response should only contain the json and nothing else
         user_id: userId,
       });
     } catch (logError) {
-      console.error("Failed to log error:", logError);
+      logger.error("Failed to log error:", logError);
     }
   }
 
@@ -180,7 +181,7 @@ Your response should only contain the json and nothing else
     try {
       return JSON.parse(jsonText);
     } catch (error) {
-      console.error("Failed to parse JSON:", error);
+      logger.error("Failed to parse JSON:", error);
       return null;
     }
   }

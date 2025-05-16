@@ -1,5 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 import { createSupabaseServerInstance } from "@/db/supabase.server";
+import { logger } from "../utils/logger";
 
 // Public paths that don't require authentication
 const PUBLIC_PATHS = [
@@ -16,8 +17,8 @@ const PUBLIC_PATHS = [
 export const onRequest = defineMiddleware(async (context, next) => {
   const { url, cookies, request, redirect } = context;
 
-  console.log("Request path:", url.pathname);
-  console.log("Request method:", request.method);
+  logger.info("Request path:", url.pathname);
+  logger.info("Request method:", request.method);
 
   try {
     const supabase = createSupabaseServerInstance({
@@ -30,7 +31,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     // Skip auth check for public paths
     if (PUBLIC_PATHS.includes(url.pathname)) {
-      console.log("Skipping auth check for:", url.pathname);
+      logger.info("Skipping auth check for:", url.pathname);
       return next();
     }
 
@@ -41,7 +42,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     } = await supabase.auth.getUser();
 
     if (error) {
-      console.error("Auth error in middleware:", error);
+      logger.error("Auth error in middleware:", error);
     }
 
     // For API routes, let them handle their own auth
@@ -51,7 +52,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     // For non-API routes, redirect to login if no user
     if (!user) {
-      console.log("No user found, redirecting to login");
+      logger.info("No user found, redirecting to login");
       return redirect("/auth/login");
     }
 
@@ -60,7 +61,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     return next();
   } catch (err) {
-    console.error("Middleware error:", err);
+    logger.error("Middleware error:", err);
     return next();
   }
 });

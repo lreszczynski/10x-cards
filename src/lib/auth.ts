@@ -1,6 +1,7 @@
 import type { AstroGlobal } from "astro";
 import type { User } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { logger } from "../utils/logger";
 
 export async function getUser(
   context: AstroGlobal | { locals: { supabase: SupabaseClient; user?: User | null } }
@@ -12,7 +13,7 @@ export async function getUser(
 
   // Otherwise, try to get user from Supabase
   if (!context.locals.supabase) {
-    console.error("Supabase client not found in context");
+    logger.error("Supabase client not found in context");
     return null;
   }
 
@@ -23,13 +24,13 @@ export async function getUser(
     } = await context.locals.supabase.auth.getUser();
 
     if (error) {
-      console.error("Error getting user:", error);
+      logger.error("Error getting user:", error);
       return null;
     }
 
     return user;
   } catch (error) {
-    console.error("Error in getUser:", error);
+    logger.error("Error in getUser:", error);
     return null;
   }
 }

@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { FlashcardsService } from "@/lib/services/flashcards.service";
 import { getUser } from "@/lib/auth";
+import { logger } from "../../../utils/logger";
 
 export const GET: APIRoute = async ({ locals }) => {
   try {
@@ -21,7 +22,7 @@ export const GET: APIRoute = async ({ locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching flashcards:", error);
+    logger.error("Error fetching flashcards:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

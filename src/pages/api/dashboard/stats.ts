@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getUser } from "@/lib/auth";
+import { logger } from "../../../utils/logger";
 
 export const prerender = false;
 
@@ -29,7 +30,7 @@ export const GET: APIRoute = async ({ locals }) => {
       .eq("user_id", user.id);
 
     if (dbError) {
-      console.error("Database error:", dbError);
+      logger.error("Database error:", dbError);
       throw dbError;
     }
 
@@ -45,7 +46,7 @@ export const GET: APIRoute = async ({ locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
+    logger.error("Error fetching dashboard stats:", error);
     return new Response(JSON.stringify({ error: "Failed to fetch dashboard statistics" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

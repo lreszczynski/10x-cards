@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createSupabaseServerInstance } from "@/db/supabase.server";
+import { logger } from "../../../utils/logger";
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
@@ -48,7 +49,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     );
   } catch (err) {
-    console.error("Registration error:", err);
+    logger.error("Registration error:", err);
     return new Response(
       JSON.stringify({
         error: "An unexpected error occurred during registration",

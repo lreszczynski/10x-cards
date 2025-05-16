@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { AIGenerationService } from "../../lib/services/ai-generation.service";
 import { getUser } from "../../lib/auth";
+import { logger } from "../../utils/logger";
 
 export const prerender = false;
 
@@ -51,7 +52,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (genError) {
-      console.error("Flashcard generation error:", genError);
+      logger.error("Flashcard generation error:", genError);
       return new Response(
         JSON.stringify({
           error: "Failed to generate flashcards",
@@ -62,7 +63,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
   } catch (error) {
-    console.error("Error processing generation request:", error);
+    logger.error("Error processing generation request:", error);
 
     return new Response(
       JSON.stringify({

@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { FlashcardsService } from "@/lib/services/flashcards.service";
 import { getUser } from "@/lib/auth";
+import { logger } from "../../../utils/logger";
 
 // Validation schema for updating a flashcard
 const updateFlashcardSchema = z.object({
@@ -43,7 +44,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error fetching flashcard:", error);
+    logger.error("Error fetching flashcard:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -102,7 +103,7 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error updating flashcard:", error);
+    logger.error("Error updating flashcard:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -144,7 +145,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error deleting flashcard:", error);
+    logger.error("Error deleting flashcard:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

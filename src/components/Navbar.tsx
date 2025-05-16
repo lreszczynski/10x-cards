@@ -2,6 +2,7 @@ import { Button } from "./ui/button";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
+import { logger } from "../utils/logger";
 
 interface NavbarProps {
   user: User | null;
@@ -27,7 +28,7 @@ export function Navbar({ user }: NavbarProps) {
       // Redirect to login page after successful logout
       window.location.href = "/auth/login";
     } catch (error) {
-      console.error("Sign out error:", error);
+      logger.error("Sign out error:", error);
       // You might want to show an error message to the user here
     } finally {
       setIsLoading(false);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Loader2 } from "lucide-react";
+import { logger } from "../../utils/logger";
 
 interface StatsProps {
   userId: string;
@@ -53,7 +54,7 @@ export function Stats({ userId }: StatsProps) {
           error: null,
         });
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        logger.error("Error fetching stats:", error);
         setStats((prev) => ({
           ...prev,
           loading: false,

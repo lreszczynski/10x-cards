@@ -1,6 +1,7 @@
 import type { Database } from "../../db/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CreateFlashcardCommandDto, FlashcardResponseDto } from "../../types";
+import { logger } from "../../utils/logger";
 
 export class FlashcardsService {
   constructor(private readonly supabase: SupabaseClient<Database>) {}
@@ -17,8 +18,8 @@ export class FlashcardsService {
       .select();
 
     if (error) {
-      console.error("Error creating flashcards:", error);
-      throw new Error("Failed to create flashcards");
+      logger.error("Error creating flashcards:", error);
+      throw error;
     }
 
     return data as FlashcardResponseDto[];
@@ -32,8 +33,8 @@ export class FlashcardsService {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching flashcards:", error);
-      throw new Error("Failed to fetch flashcards");
+      logger.error("Error fetching flashcards:", error);
+      throw error;
     }
 
     return data as FlashcardResponseDto[];
@@ -46,8 +47,8 @@ export class FlashcardsService {
       if (error.code === "PGRST116") {
         return null;
       }
-      console.error("Error fetching flashcard:", error);
-      throw new Error("Failed to fetch flashcard");
+      logger.error("Error fetching flashcard:", error);
+      throw error;
     }
 
     return data as FlashcardResponseDto;
@@ -74,8 +75,8 @@ export class FlashcardsService {
       if (error.code === "PGRST116") {
         return null;
       }
-      console.error("Error updating flashcard:", error);
-      throw new Error("Failed to update flashcard");
+      logger.error("Error updating flashcard:", error);
+      throw error;
     }
 
     return data as FlashcardResponseDto;
@@ -85,8 +86,8 @@ export class FlashcardsService {
     const { error } = await this.supabase.from("flashcards").delete().eq("user_id", userId).eq("id", id);
 
     if (error) {
-      console.error("Error deleting flashcard:", error);
-      throw new Error("Failed to delete flashcard");
+      logger.error("Error deleting flashcard:", error);
+      throw error;
     }
 
     return true;
